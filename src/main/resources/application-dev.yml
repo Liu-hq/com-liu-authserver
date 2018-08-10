@@ -1,0 +1,59 @@
+defaultCatalog: "test"
+
+server:
+  port: 8060
+
+eureka:
+  instance:
+    hostname: localhost
+  server:
+    enableSelfPreservation: false #开启保护模式 默认为true
+    eviction-interval-timer-in-ms: 20000 #10秒清理无效节点
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+spring:
+  application:
+    name: com.liu.authserver
+  kafka:
+    listener:
+      poll-timeout: 6000
+    producer:
+      acks: 0
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: "com-liu"
+      auto-offset-reset: "earliest"
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    bootstrap-servers: "172.31.206.211:9092"
+  datasource:
+    druid: #druid数据源
+      url: jdbc:mysql://localhost/${defaultCatalog}?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true
+      username: "root"
+      password: "root"
+      driver-class-name: "com.mysql.jdbc.Driver"
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 60000
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxPoolPreparedStatementPerConnectionSize: 20
+      filters: stat,wall
+      filter:
+        stat:
+          log-slow-sql: true
+          slow-sql-millis: 5000
+log:
+  path: D:\logs
+  level: INFO
+

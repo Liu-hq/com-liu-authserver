@@ -1,0 +1,12 @@
+#公共配置
+spring:
+  profiles:
+    active: dev
+  http:
+    encoding:
+      enabled: true
+      charset: utf-8
+      force: true
+mybatis:
+  config-location: classpath:mybatis/mybatis-config.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
