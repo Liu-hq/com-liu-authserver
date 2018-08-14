@@ -1,7 +1,7 @@
 package com.liu.authserver.service;
 
-import com.liu.authserver.domain.App;
-import com.liu.authserver.mapper.AppMapper;
+import com.liu.authserver.domain.Client;
+import com.liu.authserver.mapper.ClientMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,19 +14,19 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Service
 @Transactional
-public class AppService {
+public class ClientService {
 
     @Autowired
-    private AppMapper appMapper;
+    private ClientMapper appMapper;
 
     @PostMapping(value="/add")
     public String add(HttpServletRequest request) {
         try {
-            App app = new App();
+            Client app = new Client();
             app.setClientId("111");
             app.setClientName("222");
             app.setClientSecret("333");
-            app.setCallbackUrl("444");
+            app.setRedirectUrl("444");
             app.setHomePageUrl("555");
             app.setScope("6666");
             app.setCode("77777");
@@ -38,15 +38,7 @@ public class AppService {
         return "succeed";
     }
 
-    public boolean checkClientId(String appId){
-        App app = appMapper.getOneByClientId(appId);
-        if(app!=null){
-            return true;
-        }
-        return false;
-    }
-
-    public App findByClientId(String appId){
+    public Client findByClientId(String appId){
         return appMapper.getOneByClientId(appId);
     }
 

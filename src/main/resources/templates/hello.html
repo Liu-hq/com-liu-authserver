@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Insert title here</title>
+</head>
+<body>
+<h1>登录页面</h1>
+
+<form action="/authorize" method="post">
+
+    <input type="hidden" name="client_id" th:value="${client.clientId}"/>
+    <input type="hidden" name="response_type" th:value="code"/>
+    <input type="hidden" name="redirect_uri" th:value="${client.callbackUrl}"/>
+
+    用户名：<input type="text" name="username"/>
+    密码：<input type="password" name="password" />
+    <input type="submit"/>
+</form>
+
+</body>
+</html>

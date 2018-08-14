@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Administrator on 2018/8/9.
  */
-public class App implements Serializable {
+public class Client implements Serializable {
 
     String id;
 
@@ -16,7 +16,7 @@ public class App implements Serializable {
 
     String description;//应用的描述
     String homePageUrl;//应用的主页
-    String callbackUrl;//应用的回调url
+    String redirectUrl;//应用的回调url
     String code;//自增code
 
     String scope; //作用域
@@ -43,14 +43,6 @@ public class App implements Serializable {
 
     public void setHomePageUrl(String homePageUrl) {
         this.homePageUrl = homePageUrl;
-    }
-
-    public String getCallbackUrl() {
-        return callbackUrl;
-    }
-
-    public void setCallbackUrl(String callbackUrl) {
-        this.callbackUrl = callbackUrl;
     }
 
     public String getScope() {
@@ -91,5 +83,13 @@ public class App implements Serializable {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public void setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
     }
 }

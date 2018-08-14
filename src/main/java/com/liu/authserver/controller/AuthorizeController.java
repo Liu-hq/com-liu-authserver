@@ -1,7 +1,7 @@
 package com.liu.authserver.controller;
 
-import com.liu.authserver.mapper.AppMapper;
-import com.liu.authserver.service.AppService;
+import com.liu.authserver.service.ClientService;
+import com.liu.authserver.service.OAuthService;
 import org.apache.commons.lang.StringUtils;
 import org.apache.oltu.oauth2.as.issuer.MD5Generator;
 import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
@@ -18,10 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import rx.subjects.Subject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -31,15 +30,18 @@ import java.net.URISyntaxException;
 /**
  * Created by Administrator on 2018/8/9.
  */
-@RestController
-@RequestMapping("/oauth-server")
+@Controller
 public class AuthorizeController {
 
     @Autowired
-    private AppService clientService;
+    private ClientService clientService;
+    @Autowired
+    private OAuthService oAuthService;
 
     /**
-    1、首先通过如http://localhost:8060/oauth-server/authorize?client_id=111&response_type=code&redirect_uri=http://localhost:8051/test访问授权页面；
+     * 第一步
+     *
+    1、首先通过如http://localhost:8060/authorize?client_id=111&response_type=code&redirect_uri=http://localhost:8051/test访问授权页面；
     2、该控制器首先检查clientId是否正确；如果错误将返回相应的错误信息；
     3、然后判断用户是否登录了，如果没有登录首先到登录页面登录；
     4、登录成功后生成相应的auth code即授权码，然后重定向到客户端地址，如http://localhost:9080/chapter17-client/oauth2-login?code=52b1832f5dff68122f4f00ae995da0ed；
@@ -51,7 +53,7 @@ public class AuthorizeController {
             //构建OAuth 授权请求
             OAuthAuthzRequest oauthRequest = new OAuthAuthzRequest(request);
             //检查传入的客户端id是否正确
-            if (!clientService.checkClientId(oauthRequest.getClientId())) {
+            if (!oAuthService.checkClientId(oauthRequest.getClientId())) {
                 OAuthResponse response = OAuthASResponse
                         .errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                         .setError(OAuthError.TokenResponse.INVALID_CLIENT)
@@ -65,9 +67,9 @@ public class AuthorizeController {
             if(!login(request)) {//登录失败时跳转到登陆页面
                 model.addAttribute("client",
                         clientService.findByClientId(oauthRequest.getClientId()));
-                return "oauth2login";
+                return "hello";
             }
-//            String username = (String)subject.getPrincipal();
+            String username = request.getParameter("username");
             //生成授权码
             String authorizationCode = null;
             //responseType目前仅支持CODE，另外还有TOKEN
@@ -76,7 +78,7 @@ public class AuthorizeController {
                 OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
                 authorizationCode = oauthIssuerImpl.authorizationCode();
                 System.out.println(authorizationCode+"---------");
-//                oAuthService.addAuthCode(authorizationCode, username);
+                oAuthService.addAuthCode(authorizationCode, username);
             }
             //进行OAuth响应构建
             OAuthASResponse.OAuthAuthorizationResponseBuilder builder =
@@ -130,5 +132,10 @@ public class AuthorizeController {
         }
     }
 
+
+    @RequestMapping("hello")
+    public String index(){
+        return "hello";
+    }
 
 }

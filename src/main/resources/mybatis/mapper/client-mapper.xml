@@ -1,65 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.liu.authserver.mapper.AppMapper" >
-    <resultMap id="BaseResultMap" type="com.liu.authserver.domain.App" >
+<mapper namespace="com.liu.authserver.mapper.ClientMapper" >
+    <resultMap id="BaseResultMap" type="com.liu.authserver.domain.Client" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="client_name" property="clientName" jdbcType="VARCHAR" />
         <result column="client_id" property="clientId" jdbcType="VARCHAR" />
         <result column="client_secret" property="clientSecret" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR" />
         <result column="home_page_url" property="homePageUrl" jdbcType="VARCHAR" />
-        <result column="callback_url" property="callbackUrl" jdbcType="VARCHAR" />
+        <result column="callback_url" property="redirectUrl" jdbcType="VARCHAR" />
         <result column="scope" property="scope" jdbcType="VARCHAR" />
         <result column="code" property="code" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, client_name, client_id, client_secret, description,home_page_url,callback_url,scope,code
+        id, client_name, client_id, client_secret, description,home_page_url,redirect_url,scope,code
     </sql>
 
     <select id="getAll" resultMap="BaseResultMap"  >
         SELECT
         <include refid="Base_Column_List" />
-        FROM app
+        FROM client
     </select>
 
     <select id="getOne" parameterType="java.lang.String" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
-        FROM app
+        FROM client
         WHERE code = #{code}
     </select>
 
     <select id="getOneByClientId" parameterType="java.lang.String" resultMap="BaseResultMap" >
         SELECT
         <include refid="Base_Column_List" />
-        FROM app
+        FROM client
         WHERE client_id = #{clientId}
     </select>
 
-    <insert id="insert" parameterType="com.liu.authserver.domain.App" >
+    <select id="getOneByClientSecret" parameterType="java.lang.String" resultMap="BaseResultMap" >
+        SELECT
+        <include refid="Base_Column_List" />
+        FROM client
+        WHERE client_secret = #{clientSecret}
+    </select>
+
+    <insert id="insert" parameterType="com.liu.authserver.domain.Client" >
         INSERT INTO
-        app
-        (client_name,client_id,client_secret,description,home_page_url,callback_url,scope,code)
+        client
+        (client_name,client_id,client_secret,description,home_page_url,redirect_url,scope,code)
         VALUES
-        (#{clientName}, #{clientId}, #{clientSecret}, #{description}, #{homePageUrl}, #{callbackUrl}, #{scope},#{code})
+        (#{clientName}, #{clientId}, #{clientSecret}, #{description}, #{homePageUrl}, #{redirectUrl}, #{scope},#{code})
     </insert>
 
-    <update id="update" parameterType="com.liu.authserver.domain.App" >
+    <update id="update" parameterType="com.liu.authserver.domain.Client" >
         UPDATE
-        app
+        client
         SET
         <if test="clientName != null">client_name = #{clientName},</if>
         <if test="description != null">description = #{description},</if>
         <if test="homePageUrl != null">home_page_url = #{homePageUrl},</if>
-        <if test="callbackUrl != null">callback_url = #{callbackUrl},</if>
+        <if test="redirectUrl != null">redirect_url = #{redirectUrl},</if>
         WHERE
         code = #{code}
     </update>
 
     <delete id="delete" parameterType="java.lang.String" >
         DELETE FROM
-        app
+        client
         WHERE
         code =#{code}
     </delete>

@@ -53,7 +53,10 @@ spring:
         stat:
           log-slow-sql: true
           slow-sql-millis: 5000
+  thymeleaf:
+    mode: HTML5
 log:
   path: D:\logs
   level: INFO
+
 
