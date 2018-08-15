@@ -27,9 +27,7 @@ public class ClientService {
             app.setClientName("222");
             app.setClientSecret("333");
             app.setRedirectUrl("444");
-            app.setHomePageUrl("555");
             app.setScope("6666");
-            app.setCode("77777");
             app.setDescription("8888888");
             appMapper.insert(app);
         }catch (Exception e){

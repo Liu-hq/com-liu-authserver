@@ -33,7 +33,6 @@ public class AccessTokenController {
     @Autowired
     private OAuthService oAuthService;
 
-
     /**
      1、首先通过如http://localhost:8060/access/accessToken，POST提交如下数据：client_id= c1ebe466-1cdc-4bd3-ab69-77c3561b9dee& client_secret= d8346ea2-6017-43ed-ad68-19c0f971738b&grant_type=authorization_code&code=828beda907066d058584f37bcfd597b6&redirect_uri=http://localhost:9080/chapter17-client/oauth2-login访问；
      2、该控制器会验证client_id、client_secret、auth code的正确性，如果错误会返回相应的错误；

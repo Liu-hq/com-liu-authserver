@@ -13,11 +13,8 @@ public class Client implements Serializable {
     String clientSecret;//生成的随机密钥
     String clientName;//应用名称
 
-
     String description;//应用的描述
-    String homePageUrl;//应用的主页
     String redirectUrl;//应用的回调url
-    String code;//自增code
 
     String scope; //作用域
 
@@ -35,14 +32,6 @@ public class Client implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getHomePageUrl() {
-        return homePageUrl;
-    }
-
-    public void setHomePageUrl(String homePageUrl) {
-        this.homePageUrl = homePageUrl;
     }
 
     public String getScope() {
@@ -75,14 +64,6 @@ public class Client implements Serializable {
 
     public void setClientName(String clientName) {
         this.clientName = clientName;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getRedirectUrl() {

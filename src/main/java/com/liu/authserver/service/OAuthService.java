@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Created by Administrator on 2018/8/10.
  */
@@ -22,35 +24,36 @@ public class OAuthService {
     // 添加 auth code
     public void addAuthCode(String authCode, String username)
     {
-        redisTemplate.opsForValue().set(authCode,username);
+        redisTemplate.opsForValue().set(authCode,username,300, TimeUnit.SECONDS);
     }
     // 添加 access token
     public void addAccessToken(String accessToken, String username)
     {
-        redisTemplate.opsForValue().set(accessToken,username);
+        redisTemplate.opsForValue().set(accessToken,username,7200, TimeUnit.MINUTES);
     }
     // 验证auth code是否有效
     public boolean checkAuthCode(String authCode)
     {
         String username = redisTemplate.opsForValue().get(authCode);
-        return StringUtils.isEmpty(username);
+        return !StringUtils.isEmpty(username);
     }
     // 验证access token是否有效
     public boolean checkAccessToken(String accessToken){
-        return true;
+        String username = redisTemplate.opsForValue().get(accessToken);
+        return !StringUtils.isEmpty(username);
     }
     // 根据auth code获取用户名
     public String getUsernameByAuthCode(String authCode){
-        return "";
+        return redisTemplate.opsForValue().get(authCode);
     }
     // 根据access token获取用户名
     public String getUsernameByAccessToken(String accessToken){
-        return "";
+        return redisTemplate.opsForValue().get(accessToken);
     }
 
     //auth code / access token 过期时间
     public long getExpireIn(){
-        return 7200;
+        return 7200L;
     }
 
     // 检查客户端id是否存在

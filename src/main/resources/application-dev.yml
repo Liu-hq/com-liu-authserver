@@ -17,6 +17,17 @@ eureka:
 spring:
   application:
     name: com.liu.authserver
+  redis:
+    timeout: "3000"
+    host: "172.16.105.145"
+    password: ""
+    port: "6379" #最小空闲数
+    jedis:
+      pool:
+        maxIdle: "200" #最大空闲数
+        max-active: "1024" #最大连接数
+        max-wait: "10000" #最大建立连接等待时间
+        min-idle: "20"
   kafka:
     listener:
       poll-timeout: 6000

@@ -8,13 +8,12 @@
         <result column="client_secret" property="clientSecret" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR" />
         <result column="home_page_url" property="homePageUrl" jdbcType="VARCHAR" />
-        <result column="callback_url" property="redirectUrl" jdbcType="VARCHAR" />
+        <result column="redirect_url" property="redirectUrl" jdbcType="VARCHAR" />
         <result column="scope" property="scope" jdbcType="VARCHAR" />
-        <result column="code" property="code" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, client_name, client_id, client_secret, description,home_page_url,redirect_url,scope,code
+        id, client_name, client_id, client_secret, description,home_page_url,redirect_url,scope
     </sql>
 
     <select id="getAll" resultMap="BaseResultMap"  >
@@ -27,7 +26,7 @@
         SELECT
         <include refid="Base_Column_List" />
         FROM client
-        WHERE code = #{code}
+        WHERE id = #{id}
     </select>
 
     <select id="getOneByClientId" parameterType="java.lang.String" resultMap="BaseResultMap" >
@@ -47,9 +46,9 @@
     <insert id="insert" parameterType="com.liu.authserver.domain.Client" >
         INSERT INTO
         client
-        (client_name,client_id,client_secret,description,home_page_url,redirect_url,scope,code)
+        (client_name,client_id,client_secret,description,home_page_url,redirect_url,scope)
         VALUES
-        (#{clientName}, #{clientId}, #{clientSecret}, #{description}, #{homePageUrl}, #{redirectUrl}, #{scope},#{code})
+        (#{clientName}, #{clientId}, #{clientSecret}, #{description}, #{homePageUrl}, #{redirectUrl}, #{scope})
     </insert>
 
     <update id="update" parameterType="com.liu.authserver.domain.Client" >
@@ -61,13 +60,13 @@
         <if test="homePageUrl != null">home_page_url = #{homePageUrl},</if>
         <if test="redirectUrl != null">redirect_url = #{redirectUrl},</if>
         WHERE
-        code = #{code}
+        id = #{id}
     </update>
 
     <delete id="delete" parameterType="java.lang.String" >
         DELETE FROM
         client
         WHERE
-        code =#{code}
+        id =#{id}
     </delete>
 </mapper>

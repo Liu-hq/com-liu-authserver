@@ -12,7 +12,7 @@ public interface ClientMapper {
 
     List<Client> getAll();
 
-    Client getOne(String code);
+    Client getOne(String id);
 
     Client getOneByClientId(String appId);
 
@@ -22,6 +22,6 @@ public interface ClientMapper {
 
     void update(Client app);
 
-    void delete(String code);
+    void delete(String id);
 
 }
