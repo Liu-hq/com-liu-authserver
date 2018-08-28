@@ -16,8 +16,6 @@ public class Client implements Serializable {
     String description;//应用的描述
     String redirectUrl;//应用的回调url
 
-    String scope; //作用域
-
     public String getId() {
         return id;
     }
@@ -32,14 +30,6 @@ public class Client implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public void setScope(String scope) {
-        this.scope = scope;
     }
 
     public String getClientId() {

@@ -14,6 +14,8 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ResponseType;
 import org.apache.oltu.oauth2.common.utils.OAuthUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,7 +33,10 @@ import java.net.URISyntaxException;
  * Created by Administrator on 2018/8/9.
  */
 @Controller
+@RequestMapping("/oauth2")
 public class AuthorizeController {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthorizeController.class);
 
     @Autowired
     private ClientService clientService;
@@ -67,6 +72,7 @@ public class AuthorizeController {
             if(!login(request)) {//登录失败时跳转到登陆页面
                 model.addAttribute("client",
                         clientService.findByClientId(oauthRequest.getClientId()));
+                model.addAttribute("state",oauthRequest.getState());
                 return "hello";
             }
             String username = request.getParameter("username");
@@ -77,7 +83,6 @@ public class AuthorizeController {
             if (responseType.equals(ResponseType.CODE.toString())) {
                 OAuthIssuerImpl oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
                 authorizationCode = oauthIssuerImpl.authorizationCode();
-                System.out.println(authorizationCode+"---------");
                 oAuthService.addAuthCode(authorizationCode, username);
             }
             //进行OAuth响应构建
@@ -86,6 +91,9 @@ public class AuthorizeController {
                             HttpServletResponse.SC_FOUND);
             //设置授权码
             builder.setCode(authorizationCode);
+            if(StringUtils.isNotEmpty(oauthRequest.getState())){
+                builder.setParam(OAuth.OAUTH_STATE,oauthRequest.getState());
+            }
             //得到到客户端重定向地址
             String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
             //构建响应

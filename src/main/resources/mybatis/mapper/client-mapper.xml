@@ -7,13 +7,11 @@
         <result column="client_id" property="clientId" jdbcType="VARCHAR" />
         <result column="client_secret" property="clientSecret" jdbcType="VARCHAR"/>
         <result column="description" property="description" jdbcType="VARCHAR" />
-        <result column="home_page_url" property="homePageUrl" jdbcType="VARCHAR" />
         <result column="redirect_url" property="redirectUrl" jdbcType="VARCHAR" />
-        <result column="scope" property="scope" jdbcType="VARCHAR" />
     </resultMap>
 
     <sql id="Base_Column_List" >
-        id, client_name, client_id, client_secret, description,home_page_url,redirect_url,scope
+        id, client_name, client_id, client_secret, description,redirect_url
     </sql>
 
     <select id="getAll" resultMap="BaseResultMap"  >
@@ -46,9 +44,9 @@
     <insert id="insert" parameterType="com.liu.authserver.domain.Client" >
         INSERT INTO
         client
-        (client_name,client_id,client_secret,description,home_page_url,redirect_url,scope)
+        (client_name,client_id,client_secret,description,redirect_url)
         VALUES
-        (#{clientName}, #{clientId}, #{clientSecret}, #{description}, #{homePageUrl}, #{redirectUrl}, #{scope})
+        (#{clientName}, #{clientId}, #{clientSecret}, #{description}, #{redirectUrl})
     </insert>
 
     <update id="update" parameterType="com.liu.authserver.domain.Client" >
@@ -57,7 +55,6 @@
         SET
         <if test="clientName != null">client_name = #{clientName},</if>
         <if test="description != null">description = #{description},</if>
-        <if test="homePageUrl != null">home_page_url = #{homePageUrl},</if>
         <if test="redirectUrl != null">redirect_url = #{redirectUrl},</if>
         WHERE
         id = #{id}

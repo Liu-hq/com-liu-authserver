@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
  * Created by Administrator on 2018/7/12.
  */
 @RestController
-@RequestMapping("/app")
+@RequestMapping("/client")
 public class ClientController {
 
     @Autowired
@@ -20,8 +20,7 @@ public class ClientController {
 
     @RequestMapping(value="/add")
     public String add(HttpServletRequest request) {
-        appService.add(request);
-        return "succeed";
+        return JSONObject.toJSONString(appService.add(request));
     }
 
     @RequestMapping(value="/test")

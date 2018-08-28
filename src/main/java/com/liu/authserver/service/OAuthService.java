@@ -2,11 +2,16 @@ package com.liu.authserver.service;
 
 import com.liu.authserver.domain.Client;
 import com.liu.authserver.mapper.ClientMapper;
+import org.apache.oltu.oauth2.as.issuer.MD5Generator;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuer;
+import org.apache.oltu.oauth2.as.issuer.OAuthIssuerImpl;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.net.URISyntaxException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,13 +29,20 @@ public class OAuthService {
     // 添加 auth code
     public void addAuthCode(String authCode, String username)
     {
-        redisTemplate.opsForValue().set(authCode,username,300, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(authCode,username,600, TimeUnit.SECONDS);
     }
     // 添加 access token
     public void addAccessToken(String accessToken, String username)
     {
-        redisTemplate.opsForValue().set(accessToken,username,7200, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(accessToken,username,7200, TimeUnit.SECONDS);
     }
+
+    // 添加access refresh token
+    public void addRefreshToken(String refreshToken, String accessTokenAndUsername)
+    {
+        redisTemplate.opsForValue().set(refreshToken,accessTokenAndUsername,30*24*3600, TimeUnit.SECONDS);
+    }
+
     // 验证auth code是否有效
     public boolean checkAuthCode(String authCode)
     {
@@ -41,6 +53,17 @@ public class OAuthService {
     public boolean checkAccessToken(String accessToken){
         String username = redisTemplate.opsForValue().get(accessToken);
         return !StringUtils.isEmpty(username);
+    }
+
+    // 验证access refresh token是否有效
+    public boolean checkRefreshToken(String refreshToken){
+        String username = redisTemplate.opsForValue().get(refreshToken);
+        return !StringUtils.isEmpty(username);
+    }
+
+    // 根据refreshToken获取accessToken
+    public String getAccessTokenByRefreshToken(String refreshToken){
+        return redisTemplate.opsForValue().get(refreshToken);
     }
     // 根据auth code获取用户名
     public String getUsernameByAuthCode(String authCode){

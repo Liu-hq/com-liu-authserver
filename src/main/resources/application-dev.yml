@@ -1,4 +1,4 @@
-defaultCatalog: "test"
+defaultCatalog: "oauth"
 
 server:
   port: 8060
