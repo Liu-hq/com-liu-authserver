@@ -5,15 +5,10 @@ server:
 
 eureka:
   instance:
-    hostname: localhost
-  server:
-    enableSelfPreservation: false #开启保护模式 默认为true
-    eviction-interval-timer-in-ms: 20000 #10秒清理无效节点
+    hostname: localhost000
   client:
-    registerWithEureka: false
-    fetchRegistry: false
     serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+      defaultZone: http://discoveryservice.dev.saas.dyrs.online/eureka/
 spring:
   application:
     name: com.liu.authserver
@@ -28,19 +23,19 @@ spring:
         max-active: "1024" #最大连接数
         max-wait: "10000" #最大建立连接等待时间
         min-idle: "20"
-  kafka:
-    listener:
-      poll-timeout: 6000
-    producer:
-      acks: 0
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
-    consumer:
-      group-id: "com-liu"
-      auto-offset-reset: "earliest"
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-    bootstrap-servers: "172.31.206.211:9092"
+#  kafka:
+#    listener:
+#      poll-timeout: 6000
+#    producer:
+#      acks: 0
+#      key-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+#    consumer:
+#      group-id: "com-liu"
+#      auto-offset-reset: "earliest"
+#      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+#    bootstrap-servers: "172.16.105.145:9092"
   datasource:
     druid: #druid数据源
       url: jdbc:mysql://localhost/${defaultCatalog}?useUnicode=true&characterEncoding=UTF-8&createDatabaseIfNotExist=true
@@ -66,6 +61,33 @@ spring:
           slow-sql-millis: 5000
   thymeleaf:
     mode: HTML5
+  sleuth:
+    enabled: true
+    sampler:
+      percentage: 1.0
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: 172.16.105.145:9092
+          zkNodes: 172.16.105.145:2181
+        bindings:
+          output:
+            destination: someTopic
+            contentType: application/*+avro
+            producer:
+              useNativeEncoding: true
+              partitionKeyExpression: payload.id
+              partitionCount: 5
+          input:
+            destination: someTopic
+            contentType: application/vnd.someType.v1+avro
+            group: someInputGroup
+            consumer:
+              resetOffsets: true
+              headerMode: raw
+              partitioned: true
+              concurrency: 3
 log:
   path: D:\logs
   level: INFO

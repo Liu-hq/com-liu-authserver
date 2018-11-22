@@ -14,6 +14,8 @@ public interface UserMapper {
 
     UserEntity getOne(Long id);
 
+    UserEntity getOneByName(String userName);
+
     void insert(UserEntity user);
 
     void update(UserEntity user);

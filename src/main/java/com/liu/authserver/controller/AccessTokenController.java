@@ -92,15 +92,15 @@ public class AccessTokenController {
                 }
             }
             //生成Access Token
-            String openId = oAuthService.getUsernameByAuthCode(authCode);
+            String username = oAuthService.getUsernameByAuthCode(authCode);
+            int openId = hash(oauthRequest.getClientId() + username );
             OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
             final String accessToken = oauthIssuerImpl.accessToken();
-            oAuthService.addAccessToken(accessToken,
-                    openId);
+            oAuthService.addAccessToken(accessToken, username);
 
             final String refreshToken = oauthIssuerImpl.refreshToken();
             Map map = new HashMap();
-            map.put("openId",openId);
+            map.put("username",username);
             map.put("accessToken",accessToken);
             oAuthService.addRefreshToken(refreshToken,
                     JSONObject.toJSONString(map));
@@ -111,7 +111,7 @@ public class AccessTokenController {
                     .setAccessToken(accessToken)
                     .setExpiresIn(String.valueOf(oAuthService.getExpireIn()))
                     .setRefreshToken(refreshToken)
-                    .setParam("openid",openId)
+                    .setParam("openid",String.valueOf(openId))
                     .setScope("user_info")
                     .buildJSONMessage();
 
@@ -160,14 +160,15 @@ public class AccessTokenController {
             String refreshTokenObj = oAuthService.getAccessTokenByRefreshToken(oauthRequest.getRefreshToken());
             JSONObject jsonObject = analysis(refreshTokenObj);
             String accessToken = jsonObject.getString("accessToken");
-            String openId = jsonObject.getString("openId");
+            String username = jsonObject.getString("username");
+            int openId = hash(oauthRequest.getClientId() + username );
             if(oAuthService.checkAccessToken(accessToken)){
                 new_access_token = accessToken;
             }else{
                 OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
                 new_access_token = oauthIssuerImpl.accessToken();
             }
-            oAuthService.addAccessToken(new_access_token,openId );
+            oAuthService.addAccessToken(new_access_token,username );
 
             //生成OAuth响应
             OAuthResponse response = OAuthASResponse
@@ -175,7 +176,7 @@ public class AccessTokenController {
                     .setAccessToken(new_access_token)
                     .setExpiresIn(String.valueOf(oAuthService.getExpireIn()))
                     .setRefreshToken(oauthRequest.getRefreshToken())
-                    .setParam("openid",openId)
+                    .setParam("openid",String.valueOf(openId))
                     .setScope("user_info")
                     .buildJSONMessage();
             //根据OAuthResponse生成ResponseEntity
@@ -208,7 +209,7 @@ public class AccessTokenController {
                 OAuthIssuer oauthIssuerImpl = new OAuthIssuerImpl(new MD5Generator());
                 new_access_token = oauthIssuerImpl.accessToken();
             }
-            oAuthService.addAccessToken(new_access_token,jsonObject.getString("openId") );
+            oAuthService.addAccessToken(new_access_token,jsonObject.getString("username") );
         }catch (Exception e){
             logger.error("refreshToken error",e);
         }
@@ -217,5 +218,10 @@ public class AccessTokenController {
     public JSONObject analysis(String refreshTokenObj){
         JSONObject jsonObject = JSONObject.parseObject(refreshTokenObj);
         return jsonObject;
+    }
+
+    static final int hash(Object key) {
+        int h;
+        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
 }
